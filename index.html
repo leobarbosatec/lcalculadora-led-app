@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Painel de LED</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function populateSelects() {
+            const larguraSelect = document.getElementById('largura');
+            const alturaSelect = document.getElementById('altura');
+            
+            // Populating Largura (0.5 to 250.5 increments of 0.5)
+            for(let i = 0.5; i <= 250.5; i += 0.5) {
+                let option = document.createElement('option');
+                option.value = i;
+                option.text = i.toFixed(1) + ' m';
+                larguraSelect.appendChild(option);
+            }
+            
+            // Populating Altura (1 to 501 increments of 1)
+            for(let i = 1; i <= 501; i++) {
+                let option = document.createElement('option');
+                option.value = i;
+                option.text = i + ' m';
+                alturaSelect.appendChild(option);
+            }
+        }
+
+        function calculate() {
+            const A = parseFloat(document.getElementById('largura').value) || 0;
+            const B = parseFloat(document.getElementById('altura').value) || 0;
+
+            if (A === 0 || B === 0) {
+                return;
+            }
+
+            const pixelH = A * 256;
+            const pixelV = B * 256;
+            const area = A * B;
+            const modulos = A * 2 * B; 
+            const cases = Math.round(modulos / 6); 
+            const linkAC = cases * 6; 
+            const linkSinal = cases * 6; 
+            const acIn = area / 5; 
+            const wTotal = area * 800; 
+            const cargaKg = area * 25; 
+
+            document.getElementById('resPixel').innerText = pixelH + ' x ' + pixelV;
+            document.getElementById('resArea').innerText = area.toFixed(2) + ' m²';
+            document.getElementById('resModulos').innerText = modulos;
+            document.getElementById('resCases').innerText = cases;
+            document.getElementById('resLinkAC').innerText = linkAC;
+            document.getElementById('resLinkSinal').innerText = linkSinal;
+            document.getElementById('resAcIn').innerText = acIn.toFixed(2);
+            document.getElementById('resWTotal').innerText = wTotal.toFixed(2) + ' W';
+            document.getElementById('resCarga').innerText = cargaKg.toFixed(2) + ' Kg';
+        }
+
+        window.onload = function() {
+            populateSelects();
+            document.getElementById('largura').addEventListener('change', calculate);
+            document.getElementById('altura').addEventListener('change', calculate);
+        };
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center">
+    <div class="w-full max-w-md bg-slate-800 rounded-xl shadow-lg p-6 mb-6 border border-slate-700">
+        <h1 class="text-2xl font-bold text-center text-emerald-400 mb-6">Calculadora LED</h1>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-400 mb-1">Largura (m)</label>
+            <select id="largura" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-3 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <option value="0" disabled selected>Selecione a Largura...</option>
+            </select>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-slate-400 mb-1">Altura (m)</label>
+            <select id="altura" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-3 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                <option value="0" disabled selected>Selecione a Altura...</option>
+            </select>
+        </div>
+        
+        <div class="bg-slate-900 rounded-lg p-4 text-center border border-emerald-500/30">
+            <h2 class="text-sm text-slate-400 mb-1">Resolução (Pixels)</h2>
+            <div id="resPixel" class="text-3xl font-bold text-emerald-400 tracking-wider">0 x 0</div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-md grid grid-cols-2 gap-4">
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Área</span>
+            <span id="resArea" class="text-xl font-semibold text-blue-400 mt-1">0 m²</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Módulos</span>
+            <span id="resModulos" class="text-xl font-semibold text-blue-400 mt-1">0</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Cases</span>
+            <span id="resCases" class="text-xl font-semibold text-blue-400 mt-1">0</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Carga (Peso)</span>
+            <span id="resCarga" class="text-xl font-semibold text-rose-400 mt-1">0 Kg</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Potência (W)</span>
+            <span id="resWTotal" class="text-xl font-semibold text-amber-400 mt-1">0 W</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">AC IN</span>
+            <span id="resAcIn" class="text-xl font-semibold text-amber-400 mt-1">0</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Link AC</span>
+            <span id="resLinkAC" class="text-xl font-semibold text-slate-200 mt-1">0</span>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-col items-center">
+            <span class="text-xs text-slate-400 uppercase tracking-wider">Link Sinal</span>
+            <span id="resLinkSinal" class="text-xl font-semibold text-slate-200 mt-1">0</span>
+        </div>
+    </div>
+</body>
+</html>
